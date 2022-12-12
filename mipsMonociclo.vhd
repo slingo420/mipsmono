@@ -36,6 +36,43 @@ component Controle is
 	);
 end component;
     -- COMPLETE COM SINAIS INTERNOS
+	signal Opcode: std_logic_vector(5 downto 0);
 begin
-    -- COMPLETE
+    controle_inst: Controle
+	  port map (
+		Opcode     => Opcode,
+		RegDst     => RegDst,
+		DvCeq      => DvCeq,
+		DvCne      => DvCne,
+		DvI        => DvI,
+		LerMem     => LerMem,
+		MemParaReg => MemParaReg,
+		EscMem     => EscMem,
+		ULAFonte   => ULAFonte,
+		EscReg     => EscReg,
+		ULAOp      => ULAOp
+	  );
+
+	datapath_inst: datapath
+	  port map (
+		clock         => clock,
+		clock_ram     => clock_ram,
+		reset         => reset,
+		RegDst        => RegDst,
+		DvCeq         => DvCeq,
+		DvCne         => DvCne,
+		DvI           => DvI,
+		LerMem        => LerMem,
+		MemParaReg    => MemParaReg,
+		EscMem        => EscMem,
+		ULAFonte      => ULAFonte,
+		EscReg        => EscReg,
+		ULAOp         => ULAOp,
+		Opcode        => Opcode,
+		InstrucaoLida => InstrucaoLida,
+		DadoLido      => DadoLido,
+		RegLido1      => RegLido1,
+		RegLido2      => RegLido2,
+		ULAResultado  => ULAResultado
+	  );
 end architecture;

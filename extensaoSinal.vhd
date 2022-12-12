@@ -12,6 +12,7 @@ end entity;
 
 
 architecture behavioral of extensaoSinal is
+signal zero: std_logic_vector(larguraSaida-larguraEntrada) := (others=>'0');
 begin
-    -- COMPLETE
+	saida <= zero & entrada;
 end architecture;

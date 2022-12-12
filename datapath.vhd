@@ -124,11 +124,15 @@ architecture estrutura of datapath is
 		);
 	END COMPONENT;
     
-    signal pc_in, pc_out, mux_esc_out,edata, ula_out,inst: std_logic_vector(31 downto 0);
+    signal pc_in, pc_out ,add_pc_out, add_pc2_out, desloc_concat, mux_esc_out,edata, ula_out,inst: std_logic_vector(31 downto 0);
 	signal mux0_out: std_logic_vector(4 downto 0);
 	signal mux_dados_out, mem_dados_out,mux_fonte_out,dadolido1, dadolido2, ext_sin_out: std_logic_vector(31 downto 0);
 	signal ulaop_out: std_logic_vector(2 downto 0);
 	signal zero: std_logic;
+	signal four: std_logic_vector(31 downto 0) := (2 => '1', others => '0');
+	signal desloc_out: std_logic_vector(27 downto 0);
+	signal desloc_add2: std_logic_vector(31 downto 0);
+	signal fontePc: std_logic;
 begin
     -- COMPLETE
 	pc: registerN generic map(32, 0) port map(clock=>clock, reset=>reset, load=>'1', input=>pc_in, output=>pc_out);
@@ -146,7 +150,7 @@ begin
 		RegASerLido1   => inst(25 downto 21),
 		RegASerLido2   => inst(20 downto 16),
 		RegASerEscrito => mux0_out,
-		DadoDeEscrita  => mux_dados_out,
+		DadoDeEscrita  => mux_esc_out,
 		EscReg         => EscReg,
 		DadoLido1      => DadoLido1,
 		DadoLido2      => DadoLido2
@@ -160,7 +164,7 @@ begin
 		entrada => inst(15 downto 0),
 		saida   => ext_sin_out
 	  );
-	multiplexer2xx1_inst: multiplexer2x1
+	mux1: multiplexer2x1
 	  generic map (
 		width => 32
 	  )
@@ -201,7 +205,7 @@ begin
 		address => ula_out,
 		dataout => mem_dados_out
 	  );
-	multiplexer2x1_inst: multiplexer2x1
+	mux2: multiplexer2x1
 	  generic map (
 		width => 32
 	  )
@@ -211,6 +215,70 @@ begin
 		sel    => memparareg,
 		output => mux_esc_out
 	  );
+
+
+	add_pc: addersubtractor
+	  generic map (
+		N            => 32,
+		isAdder      => true,
+		isSubtractor => false
+	  )
+	  port map (
+		op     => '0',
+		a      => pc_out,
+		b      => four,
+		result => add_pc_out,
+		ovf    => open,
+		cout   => open
+	  );
+
+	deslocador_inst: deslocador
+	  generic map (
+		larguraDados        => 26,
+		numBitsDeslocar     => 2,
+		deslocaParaDireita  => false,
+		deslocaParaEsquerda => true
+	  )
+	  port map (
+		Entrada => inst(25 downto 0),
+		direcao => '1',
+		Saida   => desloc_out
+	  );
+
+	desloc_concat <= add_pc_out(31 downto 28) & desloc_out;
+
+	deslocador_inst2: deslocador
+	  generic map (
+		larguraDados        => 32,
+		numBitsDeslocar     => 2,
+		deslocaParaDireita  => false,
+		deslocaParaEsquerda => true
+	  )
+	  port map (
+		Entrada => ext_sin_out,
+		direcao => '1',
+		Saida   => desloc_add2
+	  );
+	
+	
+	add_pc2: addersubtractor
+	  generic map (
+		N            => 32,
+		isAdder      => true,
+		isSubtractor => false
+	  )
+	  port map (
+		op     => '0',
+		a      => add_pc_out,
+		b      => desloc_add2,
+		result => add_pc2_out,
+		ovf    => open,
+		cout   => open
+	  );
+
+	
+	
+	
 
 
 end architecture;
