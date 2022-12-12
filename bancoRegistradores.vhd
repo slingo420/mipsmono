@@ -19,29 +19,32 @@ end entity;
 
 architecture comportamento of bancoRegistradores is
 	type TipoVetorRegistradores is array(0 to 2**numBitsDefineReg-1) of std_logic_vector(larguraRegistrador-1 downto 0);
+	
 	signal reg: TipoVetorRegistradores;
+	--signal zero: TipoVetorRegistradores
+
 begin
     -- LP
     -- COMPLETE
-    
-    -- EM
-    -- ATENCAO: O Banco de registradores eh sensivel aa borda de descida do clock
-    -- COMPLETE
-	escrita: process(clock, escreg, reset) is
+
+    escrita: process(clock, escreg, reset) is
     begin
-		if falling_edge(clock) and escreg='1' then
+		if reset = '1' then
+			for i in reg'range loop
+				reg(i) <= (others=>'0');
+			end loop;
+		
+
+
+		elsif falling_edge(clock) and escreg='1' then
 			reg(to_integer(unsigned(regaserescrito))) <= dadodeescrita;
 		end if;
 
-		if reset = '1' then
-			for i in reg'range loop
-				reg(i) <= '0';
-			end loop;
-		end if;
+
 	end process;
     -- LS
 	-- COMPLETE
-	leitura: process(regaserlido1, regaserlido2) is
+	leitura: process(reg,regaserlido1, regaserlido2) is
     begin
 		dadolido1 <= reg(to_integer(unsigned(regaserlido1)));
 		dadolido2 <= reg(to_integer(unsigned(regaserlido2)));	
