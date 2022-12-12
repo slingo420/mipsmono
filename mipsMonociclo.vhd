@@ -37,20 +37,22 @@ component Controle is
 end component;
     -- COMPLETE COM SINAIS INTERNOS
 	signal Opcode: std_logic_vector(5 downto 0);
+	signal s_RegDst, s_DvCeq, s_DvCne, s_DvI, s_LerMem, s_MemParaReg, s_EscMem, s_ULAFonte, s_EscReg: std_logic; 
+	signal s_ulaop: std_logic_vector(1 downto 0);
 begin
     controle_inst: Controle
 	  port map (
 		Opcode     => Opcode,
-		RegDst     => RegDst,
-		DvCeq      => DvCeq,
-		DvCne      => DvCne,
-		DvI        => DvI,
-		LerMem     => LerMem,
-		MemParaReg => MemParaReg,
-		EscMem     => EscMem,
-		ULAFonte   => ULAFonte,
-		EscReg     => EscReg,
-		ULAOp      => ULAOp
+		RegDst     => s_RegDst,
+		DvCeq      => s_DvCeq,
+		DvCne      => s_DvCne,
+		DvI        => s_DvI,
+		LerMem     => s_LerMem,
+		MemParaReg => s_MemParaReg,
+		EscMem     => s_EscMem,
+		ULAFonte   => s_ULAFonte,
+		EscReg     => s_EscReg,
+		ULAOp      => s_ULAOp
 	  );
 
 	datapath_inst: datapath
@@ -58,16 +60,16 @@ begin
 		clock         => clock,
 		clock_ram     => clock_ram,
 		reset         => reset,
-		RegDst        => RegDst,
-		DvCeq         => DvCeq,
-		DvCne         => DvCne,
-		DvI           => DvI,
-		LerMem        => LerMem,
-		MemParaReg    => MemParaReg,
-		EscMem        => EscMem,
-		ULAFonte      => ULAFonte,
-		EscReg        => EscReg,
-		ULAOp         => ULAOp,
+		RegDst        => s_RegDst,
+		DvCeq         => s_DvCeq,
+		DvCne         => s_DvCne,
+		DvI           => s_DvI,
+		LerMem        => s_LerMem,
+		MemParaReg    => s_MemParaReg,
+		EscMem        => s_EscMem,
+		ULAFonte      => s_ULAFonte,
+		EscReg        => s_EscReg,
+		ULAOp         => s_ULAOp,
 		Opcode        => Opcode,
 		InstrucaoLida => InstrucaoLida,
 		DadoLido      => DadoLido,
